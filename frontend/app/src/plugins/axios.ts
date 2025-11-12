@@ -1,5 +1,5 @@
 import axiosLib from 'axios'
-import Cookies from 'js-cookie'
+import { tokenStorage } from '@/utils/tokenStorage'
 
 const axios = axiosLib.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -8,16 +8,29 @@ const axios = axiosLib.create({
     'Accept': 'application/json',
   },
 })
+axios.interceptors.request.use(
+  (config) => {
+    const token = tokenStorage.getToken()
 
-axios.defaults.withCredentials  = true
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
 
-axios.interceptors.request.use(async (config) => {
-  if ((config.method as string).toLowerCase() !== 'get') {
-    await axios.get('/csrf-cookie').then()
-    config.headers['X-XSRF-TOKEN'] = Cookies.get('XSRF-TOKEN')
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
   }
+)
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      tokenStorage.removeToken()
+    }
 
-  return config
-})
+    return Promise.reject(error)
+  }
+)
 
 export default axios

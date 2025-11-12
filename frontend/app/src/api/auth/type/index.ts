@@ -7,3 +7,15 @@ export interface User {
   updated_at: string,
   role: string,
 }
+
+export interface AuthResponse {
+  user: User;
+  token: string;
+}
+
+export interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}

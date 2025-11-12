@@ -9,5 +9,11 @@ export const useUserStore = defineStore('user', () => {
     user.value = JSON.parse(JSON.stringify(newUser));
   }
 
-  return { user, setUser }
+  function clearUser() {
+    user.value = null;
+  }
+
+  const isAuthenticated = computed(() => user.value !== null);
+
+  return { user, setUser, clearUser, isAuthenticated }
 })
