@@ -1,33 +1,25 @@
 <template>
   <div class="container">
-    <RouterView/>
+    <!-- Показываем loader пока идет инициализация -->
+    <div v-if="isInitializing" class="flex items-center justify-center h-screen">
+      <div class="text-xl text-gray-600">Загрузка...</div>
+    </div>
+
+    <!-- После инициализации показываем контент -->
+    <RouterView v-else />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { getUser } from "@/api/auth/auth.ts";
-import {useUserStore} from "@/stores/user.ts";
-import {useRouter} from "vue-router";
+import { useAuth } from "@/composables/useAuth";
 
-const userStore = useUserStore();
-
-const router = useRouter();
-const isAuth = ref(false);
+const { initialize } = useAuth();
+const isInitializing = ref(true);
 
 onMounted(async () => {
-  try {
-    const userData = await getUser();
-    if (userData) {
-      isAuth.value = true;
-      userStore.setUser(userData);
-      router.push('/');
-    } else {
-      router.push('/auth');
-    }
-  } catch (error) {
-    console.error('Failed to get user:', error);
-    isAuth.value = false;
-  }
+  // Инициализируем приложение - проверяем авторизацию
+  await initialize();
+  isInitializing.value = false;
 });
 </script>

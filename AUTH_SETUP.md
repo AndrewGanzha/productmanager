@@ -4,16 +4,20 @@
 
 ### Backend (Laravel)
 
-1. **Модель User** ([backend/app/app/Models/User.php](backend/app/app/Models/User.php:8))
+1. **bootstrap/app.php** ([backend/app/bootstrap/app.php](backend/app/bootstrap/app.php:17))
+   - ⚠️ **ВАЖНО**: Убран `$middleware->statefulApi()` для отключения CSRF защиты на API роутах
+   - Теперь API использует только Bearer токены без session/CSRF
+
+2. **Модель User** ([backend/app/app/Models/User.php](backend/app/app/Models/User.php:8))
    - Добавлен трейт `HasApiTokens` для работы с токенами
 
-2. **AuthController** ([backend/app/app/Http/Controllers/AuthController.php](backend/app/app/Http/Controllers/AuthController.php))
+3. **AuthController** ([backend/app/app/Http/Controllers/AuthController.php](backend/app/app/Http/Controllers/AuthController.php))
    - `register()` - регистрация нового пользователя с выдачей токена
    - `login()` - вход с выдачей токена
    - `logout()` - удаление текущего токена
    - `user()` - получение данных текущего пользователя
 
-3. **API Routes** ([backend/app/routes/api.php](backend/app/routes/api.php))
+4. **API Routes** ([backend/app/routes/api.php](backend/app/routes/api.php))
    - Публичные роуты:
      - `POST /api/auth/register` - регистрация
      - `POST /api/auth/login` - вход
