@@ -23,19 +23,42 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         $productId = $this->route('product');
+        $user = $this->user();
 
-        return [
-            'article' => [
+        $rules = [
+            'name' => ['sometimes', 'required', 'string', 'min:10'],
+            'status' => ['sometimes', 'nullable', 'string', 'in:available,unavailable'],
+            'data' => ['sometimes', 'nullable', 'array'],
+        ];
+
+        if ($user && $user->role === 'admin') {
+            $rules['article'] = [
                 'sometimes',
                 'required',
                 'string',
                 'regex:/^[a-zA-Z0-9]+$/',
                 Rule::unique('products', 'article')->ignore($productId),
-            ],
-            'name' => ['sometimes', 'required', 'string', 'min:10'],
-            'status' => ['sometimes', 'nullable', 'string', 'in:available,unavailable'],
-            'data' => ['sometimes', 'nullable', 'array'],
-        ];
+            ];
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     * @return void
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $user = $this->user();
+
+            if ($this->has('article') && $user && $user->role !== 'admin') {
+                $validator->errors()->add('article', 'У вас нет прав для изменения артикула. Только администратор может редактировать артикул.');
+            }
+        });
     }
 
     /**
