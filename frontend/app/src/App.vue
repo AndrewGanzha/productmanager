@@ -1,24 +1,25 @@
 <template>
   <div class="container">
-    <!-- Показываем loader пока идет инициализация -->
     <div v-if="isInitializing" class="flex items-center justify-center h-screen">
       <div class="text-xl text-gray-600">Загрузка...</div>
     </div>
 
-    <!-- После инициализации показываем контент -->
-    <RouterView v-else />
+    <div v-else>
+      <UserProfile v-if="isAuthenticated" />
+      <RouterView />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useAuth } from "@/composables/useAuth";
+import UserProfile from "@/components/Main/UserProfile.vue";
 
-const { initialize } = useAuth();
+const { initialize, isAuthenticated } = useAuth();
 const isInitializing = ref(true);
 
 onMounted(async () => {
-  // Инициализируем приложение - проверяем авторизацию
   await initialize();
   isInitializing.value = false;
 });

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/view/Main/index.vue';
 import AuthView from '@/view/Auth/index.vue';
 import NotfoundView from '@/view/NotFound/index.vue';
+import ProductsView from '@/view/Products/index.vue';
 import { useUserStore } from '@/stores/user';
 import { tokenStorage } from '@/utils/tokenStorage';
 
@@ -11,6 +12,11 @@ const router = createRouter({
     {
       path: '/',
       component: HomeView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/products',
+      component: ProductsView,
       meta: { requiresAuth: true }
     },
     {
