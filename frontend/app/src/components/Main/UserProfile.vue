@@ -1,19 +1,19 @@
 <template>
-  <div class="fixed top-4 left-4 z-[1000]">
+  <div class="fixed top-1.5 left-1.5 sm:top-2 sm:left-2 md:top-3 md:left-3 lg:top-4 lg:left-4 z-[1000]">
     <div
       v-if="user"
-      class="relative bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 cursor-pointer transition-all duration-200 shadow-lg hover:bg-slate-800/90 hover:border-white/20 hover:shadow-xl"
+      class="relative bg-slate-800/90 backdrop-blur-md border border-white/10 rounded-md sm:rounded-lg md:rounded-xl px-1 py-1 sm:px-1.5 sm:py-1.5 md:px-2 md:py-2 lg:px-3 lg:py-2 cursor-pointer transition-all duration-200 shadow-lg hover:bg-slate-800/95 hover:border-white/20 hover:shadow-xl"
       @click="toggleDropdown"
     >
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-3">
         <div
-          class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-base font-semibold text-white flex-shrink-0 shadow-lg shadow-indigo-500/40"
+          class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold text-white flex-shrink-0 shadow-md shadow-indigo-500/30"
         >
           {{ user.name.charAt(0).toUpperCase() }}
         </div>
-        <div class="flex flex-col gap-0.5 min-w-0">
+        <div class="hidden md:flex flex-col gap-0.5 min-w-0">
           <span
-            class="text-sm font-semibold text-white/95 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]"
+            class="text-sm font-semibold text-white/95 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] lg:max-w-[120px]"
           >
             {{ user.name }}
           </span>
@@ -29,7 +29,7 @@
           </span>
         </div>
         <svg
-          class="w-5 h-5 text-white/60 transition-transform duration-200 flex-shrink-0"
+          class="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 lg:w-5 lg:h-5 text-white/60 transition-transform duration-200 flex-shrink-0 hidden md:block"
           :class="{ 'rotate-180': isDropdownOpen }"
           viewBox="0 0 20 20"
           fill="currentColor"
@@ -50,21 +50,34 @@
       >
         <div
           v-if="isDropdownOpen"
-          class="absolute top-[calc(100%+0.5rem)] left-0 min-w-[250px] bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-lg shadow-2xl overflow-hidden"
+          class="absolute top-[calc(100%+0.25rem)] left-0 w-[220px] sm:w-[240px] md:w-[260px] lg:w-[280px] bg-slate-800/95 backdrop-blur-md border border-white/10 rounded-lg shadow-2xl overflow-hidden"
         >
-          <div class="p-3">
-            <div class="flex justify-between py-2 border-b border-white/5">
-              <span class="text-xs text-white/50 font-medium">Email:</span>
+          <div class="p-2 sm:p-2.5 md:p-3">
+            <div class="flex md:hidden flex-col gap-1.5 sm:gap-2 mb-2 sm:mb-3 pb-2 sm:pb-3 border-b border-white/5">
+              <span class="text-xs sm:text-sm font-semibold text-white/95">{{ user.name }}</span>
               <span
-                class="text-xs text-white/90 font-medium text-right overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]"
+                class="inline-block px-2 py-0.5 rounded text-xs font-medium w-fit"
+                :class="
+                  user.role === 'admin'
+                    ? 'bg-red-500/20 text-red-300 border border-red-500/30'
+                    : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                "
+              >
+                {{ getRoleLabel(user.role) }}
+              </span>
+            </div>
+            <div class="flex justify-between py-1.5 sm:py-2 border-b border-white/5">
+              <span class="text-[10px] sm:text-xs text-white/50 font-medium">Email:</span>
+              <span
+                class="text-[10px] sm:text-xs text-white/90 font-medium text-right overflow-hidden text-ellipsis whitespace-nowrap max-w-[120px] sm:max-w-[130px] md:max-w-[150px]"
               >
                 {{ user.email }}
               </span>
             </div>
-            <div class="flex justify-between py-2">
-              <span class="text-xs text-white/50 font-medium">ID:</span>
+            <div class="flex justify-between py-1.5 sm:py-2">
+              <span class="text-[10px] sm:text-xs text-white/50 font-medium">ID:</span>
               <span
-                class="text-xs text-white/90 font-medium text-right overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]"
+                class="text-[10px] sm:text-xs text-white/90 font-medium text-right overflow-hidden text-ellipsis whitespace-nowrap max-w-[120px] sm:max-w-[150px]"
               >
                 {{ user.id }}
               </span>
@@ -76,9 +89,9 @@
           <button
             @click.stop="handleLogout"
             :disabled="isLoading"
-            class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-red-500/10 text-red-300 border-t border-red-500/20 text-sm font-medium transition-colors duration-200 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 bg-red-500/10 text-red-300 border-t border-red-500/20 text-xs sm:text-sm font-medium transition-colors duration-200 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 16 16" fill="currentColor">
               <path
                 fill-rule="evenodd"
                 d="M3 3.5A1.5 1.5 0 014.5 2h6A1.5 1.5 0 0112 3.5v2a.5.5 0 01-1 0v-2a.5.5 0 00-.5-.5h-6a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h6a.5.5 0 00.5-.5v-2a.5.5 0 011 0v2A1.5 1.5 0 0110.5 14h-6A1.5 1.5 0 013 12.5v-9z"
