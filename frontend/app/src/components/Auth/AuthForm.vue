@@ -1,7 +1,6 @@
 <template>
   <div class="flex items-center justify-center h-screen px-4">
     <div class="max-w-md w-full">
-      <!-- Переключатель между входом и регистрацией -->
       <div class="flex gap-2 border-b-2 border-white/10 mb-4">
         <button
           @click="mode = 'login'"
@@ -9,7 +8,7 @@
             'flex-1 px-4 py-3 bg-transparent border-0 border-b-2 cursor-pointer text-base font-medium transition-all duration-200 -mb-0.5',
             mode === 'login'
               ? 'text-white/95 border-b-blue-400'
-              : 'text-white/50 border-transparent hover:text-white/75'
+              : 'text-white/50 border-transparent hover:text-white/75',
           ]"
         >
           Вход
@@ -20,19 +19,24 @@
             'flex-1 px-4 py-3 bg-transparent border-0 border-b-2 cursor-pointer text-base font-medium transition-all duration-200 -mb-0.5',
             mode === 'register'
               ? 'text-white/95 border-b-blue-400'
-              : 'text-white/50 border-transparent hover:text-white/75'
+              : 'text-white/50 border-transparent hover:text-white/75',
           ]"
         >
           Регистрация
         </button>
       </div>
 
-      <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 mx-auto my-0">
+      <fieldset
+        class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 mx-auto my-0"
+      >
         <legend class="fieldset-legend">
-          {{ mode === 'login' ? 'Вход в аккаунт' : 'Создание аккаунта' }}
+          {{ mode === "login" ? "Вход в аккаунт" : "Создание аккаунта" }}
         </legend>
 
-        <div v-if="error" class="p-3 rounded-lg text-sm bg-red-500/10 text-red-300 border border-red-500/30 mb-4">
+        <div
+          v-if="error"
+          class="p-3 rounded-lg text-sm bg-red-500/10 text-red-300 border border-red-500/30 mb-4"
+        >
           {{ error }}
         </div>
 
@@ -97,13 +101,19 @@
       <div class="text-center mt-4 text-sm text-white/70">
         <span v-if="mode === 'login'">
           Нет аккаунта?
-          <button @click="mode = 'register'" class="bg-transparent border-0 text-blue-400 cursor-pointer underline p-0 text-sm hover:text-blue-300 transition-colors">
+          <button
+            @click="mode = 'register'"
+            class="bg-transparent border-0 text-blue-400 cursor-pointer underline p-0 text-sm hover:text-blue-300 transition-colors"
+          >
             Зарегистрируйтесь
           </button>
         </span>
         <span v-else>
           Уже есть аккаунт?
-          <button @click="mode = 'login'" class="bg-transparent border-0 text-blue-400 cursor-pointer underline p-0 text-sm hover:text-blue-300 transition-colors">
+          <button
+            @click="mode = 'login'"
+            class="bg-transparent border-0 text-blue-400 cursor-pointer underline p-0 text-sm hover:text-blue-300 transition-colors"
+          >
             Войдите
           </button>
         </span>
@@ -118,72 +128,66 @@ import { useAuth } from "@/composables/useAuth";
 
 const { login, register, isLoading } = useAuth();
 
-type AuthMode = 'login' | 'register';
+type AuthMode = "login" | "register";
 
-const mode = ref<AuthMode>('login');
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const passwordConfirmation = ref('');
-const error = ref('');
+const mode = ref<AuthMode>("login");
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const passwordConfirmation = ref("");
+const error = ref("");
 
-// Валидация формы
 const isFormValid = computed(() => {
-  if (mode.value === 'login') {
+  if (mode.value === "login") {
     return email.value && password.value;
   } else {
     return name.value && email.value && password.value && passwordConfirmation.value;
   }
 });
 
-// Текст кнопки
 const submitButtonText = computed(() => {
   if (isLoading.value) {
-    return mode.value === 'login' ? 'Вход...' : 'Регистрация...';
+    return mode.value === "login" ? "Вход..." : "Регистрация...";
   }
-  return mode.value === 'login' ? 'Войти' : 'Зарегистрироваться';
+  return mode.value === "login" ? "Войти" : "Зарегистрироваться";
 });
 
-// Обработка отправки формы
 const handleSubmit = async () => {
-  error.value = '';
+  error.value = "";
 
-  if (mode.value === 'login') {
+  if (mode.value === "login") {
     await handleLogin();
   } else {
     await handleRegister();
   }
 };
 
-// Вход
 const handleLogin = async () => {
   if (!email.value || !password.value) {
-    error.value = 'Заполните все поля';
+    error.value = "Заполните все поля";
     return;
   }
 
   try {
     await login(email.value, password.value);
   } catch (err: any) {
-    error.value = err.response?.data?.message || 'Ошибка входа. Проверьте email и пароль.';
+    error.value = err.response?.data?.message || "Ошибка входа. Проверьте email и пароль.";
   }
 };
 
-// Регистрация
 const handleRegister = async () => {
-  // Валидация
   if (!name.value || !email.value || !password.value || !passwordConfirmation.value) {
-    error.value = 'Заполните все поля';
+    error.value = "Заполните все поля";
     return;
   }
 
   if (password.value.length < 8) {
-    error.value = 'Пароль должен содержать минимум 8 символов';
+    error.value = "Пароль должен содержать минимум 8 символов";
     return;
   }
 
   if (password.value !== passwordConfirmation.value) {
-    error.value = 'Пароли не совпадают';
+    error.value = "Пароли не совпадают";
     return;
   }
 
@@ -192,26 +196,23 @@ const handleRegister = async () => {
       name: name.value,
       email: email.value,
       password: password.value,
-      password_confirmation: passwordConfirmation.value
+      password_confirmation: passwordConfirmation.value,
     });
   } catch (err: any) {
     if (err.response?.data?.errors) {
       const errors = err.response.data.errors;
-      error.value = Object.values(errors).flat().join(', ');
+      error.value = Object.values(errors).flat().join(", ");
     } else {
-      error.value = err.response?.data?.message || 'Ошибка регистрации. Попробуйте снова.';
+      error.value = err.response?.data?.message || "Ошибка регистрации. Попробуйте снова.";
     }
   }
 };
 
-// Сброс ошибки при переключении режима
 const resetForm = () => {
-  error.value = '';
-  // Не очищаем email и password, чтобы пользователь мог переключаться между режимами
+  error.value = "";
 };
 
-// Следим за изменением режима
-import { watch } from 'vue';
+import { watch } from "vue";
 watch(mode, () => {
   resetForm();
 });
