@@ -78,7 +78,7 @@ docker exec -it laravel_backend php /var/www/artisan config:clear
 ### Frontend команды
 ```bash
 # Войти в контейнер frontend
-docker exec -it vue_frontend bash
+docker exec -it vue_frontend sh
 
 # Установить зависимости (извне контейнера)
 docker exec -it vue_frontend npm install

@@ -14,8 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->statefulApi();
-
         $middleware->redirectUsersTo(function (Request $request) {
             if ($request->expectsJson()) {
                 throw new AlreadyAuthenticatedException();
