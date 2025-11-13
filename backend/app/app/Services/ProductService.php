@@ -2,72 +2,42 @@
 
 namespace App\Services;
 
+use App\DTO\Product\CreateProductDTO;
+use App\DTO\Product\ProductCollectionDTO;
+use App\DTO\Product\ProductResponseDTO;
+use App\DTO\Product\UpdateProductDTO;
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Collection;
 
 class ProductService
 {
-    /**
-     * Get all products.
-     *
-     * @return Collection<int, Product>
-     */
-    public function getAllProducts(): Collection
+    public function getAllProducts(): ProductCollectionDTO
     {
-        return Product::all();
+        return new ProductCollectionDTO(Product::all());
     }
 
-    /**
-     * Get only available products.
-     *
-     * @return Collection<int, Product>
-     */
-    public function getAvailableProducts(): Collection
+    public function getAvailableProducts(): ProductCollectionDTO
     {
-        return Product::available()->get();
+        return new ProductCollectionDTO(Product::available()->get());
     }
 
-    /**
-     * Get a product by ID.
-     *
-     * @param int $id
-     * @return Product
-     */
-    public function getProductById(int $id): Product
+    public function getProductById(int $id): ProductResponseDTO
     {
-        return Product::findOrFail($id);
+        $product = Product::findOrFail($id);
+        return new ProductResponseDTO($product);
     }
 
-    /**
-     * Create a new product.
-     *
-     * @param array<string, mixed> $data
-     * @return Product
-     */
-    public function createProduct(array $data): Product
+    public function createProduct(CreateProductDTO $dto): ProductResponseDTO
     {
-        return Product::create($data);
+        $product = Product::create($dto->toArray());
+        return new ProductResponseDTO($product, 'Продукт успешно создан.');
     }
 
-    /**
-     * Update an existing product.
-     *
-     * @param Product $product
-     * @param array<string, mixed> $data
-     * @return Product
-     */
-    public function updateProduct(Product $product, array $data): Product
+    public function updateProduct(Product $product, UpdateProductDTO $dto): ProductResponseDTO
     {
-        $product->update($data);
-        return $product->fresh();
+        $product->update($dto->toArray());
+        return new ProductResponseDTO($product->fresh(), 'Продукт успешно обновлен.');
     }
 
-    /**
-     * Delete a product (soft delete).
-     *
-     * @param Product $product
-     * @return void
-     */
     public function deleteProduct(Product $product): void
     {
         $product->delete();

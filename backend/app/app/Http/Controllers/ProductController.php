@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\Product\CreateProductDTO;
+use App\DTO\Product\UpdateProductDTO;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
@@ -14,78 +16,39 @@ class ProductController extends Controller
         private readonly ProductService $productService
     ) {}
 
-    /**
-     * Display a listing of all products.
-     *
-     * @return JsonResponse
-     */
     public function index(): JsonResponse
     {
-        $products = $this->productService->getAllProducts();
-        return response()->json($products);
+        $productsDTO = $this->productService->getAllProducts();
+        return response()->json($productsDTO->toArray());
     }
 
-    /**
-     * Display a listing of available products.
-     *
-     * @return JsonResponse
-     */
     public function available(): JsonResponse
     {
-        $products = $this->productService->getAvailableProducts();
-        return response()->json($products);
+        $productsDTO = $this->productService->getAvailableProducts();
+        return response()->json($productsDTO->toArray());
     }
 
-    /**
-     * Display the specified product.
-     *
-     * @param Product $product
-     * @return JsonResponse
-     */
     public function show(Product $product): JsonResponse
     {
         return response()->json($product);
     }
 
-    /**
-     * Store a newly created product.
-     *
-     * @param StoreProductRequest $request
-     * @return JsonResponse
-     */
     public function store(StoreProductRequest $request): JsonResponse
     {
-        $product = $this->productService->createProduct($request->validated());
+        $createDTO = CreateProductDTO::fromArray($request->validated());
+        $responseDTO = $this->productService->createProduct($createDTO);
 
-        return response()->json([
-            'message' => 'Продукт успешно создан.',
-            'product' => $product
-        ], 201);
+        return response()->json($responseDTO->toArray(), 201);
     }
 
-    /**
-     * Update the specified product.
-     *
-     * @param UpdateProductRequest $request
-     * @param Product $product
-     * @return JsonResponse
-     */
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
-        $updatedProduct = $this->productService->updateProduct($product, $request->validated());
+        $updateDTO = UpdateProductDTO::fromArray($request->validated());
+        $responseDTO = $this->productService->updateProduct($product, $updateDTO);
 
-        return response()->json([
-            'message' => 'Продукт успешно обновлен.',
-            'product' => $updatedProduct
-        ]);
+        return response()->json($responseDTO->toArray());
     }
 
-    /**
-     * Remove the specified product (soft delete).
-     *
-     * @param Product $product
-     * @return JsonResponse
-     */
     public function destroy(Product $product): JsonResponse
     {
         $this->productService->deleteProduct($product);
