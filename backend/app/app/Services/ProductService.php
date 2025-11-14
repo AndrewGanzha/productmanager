@@ -6,6 +6,7 @@ use App\DTO\Product\CreateProductDTO;
 use App\DTO\Product\ProductCollectionDTO;
 use App\DTO\Product\ProductResponseDTO;
 use App\DTO\Product\UpdateProductDTO;
+use App\Jobs\SendEmail;
 use App\Models\Product;
 
 class ProductService
@@ -29,6 +30,9 @@ class ProductService
     public function createProduct(CreateProductDTO $dto): ProductResponseDTO
     {
         $product = Product::create($dto->toArray());
+
+        SendEmail::dispatch($product);
+
         return new ProductResponseDTO($product, 'Продукт успешно создан.');
     }
 
